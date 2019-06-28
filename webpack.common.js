@@ -1,10 +1,11 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require('webpack');
 
 module.exports = {
   entry: {
-    index: './src/index.js'
+    index: "./src/index.js"
   },
   module: {
     rules: [
@@ -17,12 +18,25 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      title: "Production"
-    })
+      title: "Caching"
+    }),
+    new webpack.HashedModuleIdsPlugin()
   ],
   output: {
-    filename: "[name].bundle.js",
-    chunkFilename: '[name].bundle.js',
+    filename: "[name].[contenthash].js",
+    // chunkFilename: "[name].bundle.js",
     path: path.resolve(__dirname, "dist")
+  },
+  optimization: {
+    runtimeChunk: "single",
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "all"
+        }
+      }
+    }
   }
 };
